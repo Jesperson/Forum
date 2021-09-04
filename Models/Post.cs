@@ -41,5 +41,10 @@ namespace AuthSystem.Models
             connection.CloseAsync();
             return (string)usernameOutput;
         }
+
+        public int GetPostId()
+        {
+            return this.PostID;
+        }
     }
 }
