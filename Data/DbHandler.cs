@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using AuthSystem.Models;
 using Microsoft.Data.Sqlite;
@@ -98,6 +99,21 @@ namespace AuthSystem.Data
             {
                 Console.WriteLine("Something went wrong with the insert query.");
                 Console.WriteLine("No tables updated.");
+            }
+            connection.Close();
+        }
+
+        public static async void WriteCommentToDb(int postId, string content, string userId)
+        {
+            using var connection = new SqliteConnection("DataSource=app.db;Cache=Shared");
+            connection.Open();
+            using var command = new SqliteCommand($"INSERT INTO {dbComments} (PostId, Text, UserId)"
+                                                  + $"VALUES ({postId}, '{content}', '{userId}')", connection);
+            var confirm = await command.ExecuteNonQueryAsync();
+            if (confirm <= 0)
+            {
+                Debug.WriteLine("SQL-command failed, no rows changed.");
+                Console.WriteLine("SQL-Command failed, no rows changed.");
             }
             connection.Close();
         }
