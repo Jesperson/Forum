@@ -1,0 +1,188 @@
+﻿@page
+@using AuthSystem.Models
+@model AuthSystem.Pages.Forum
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Forum";
+}
+<h3 class="border-bottom">Forum</h3>
+
+@{
+    // I the user is signed in - show the full page.
+    if (SignInManager.IsSignedIn(User))
+    {
+    var posts = await DbHandler.GetPosts();
+    var comments = await DbHandler.GetComments();
+    var generalPosts = new List<Post>();
+    var programmingPosts = new List<Post>();
+    var gamingPosts = new List<Post>();
+        
+        // I could use a switch-statement here but I don't see why, I think the 3 if's are more readable.
+    foreach (var post in posts)
+    {
+        if (post.Subforum == "General")
+        {
+            generalPosts.Add(post);
+        }
+        if (post.Subforum == "Programming")
+        {
+            programmingPosts.Add(post);
+        }
+        if (post.Subforum == "Gaming")
+        {
+            gamingPosts.Add(post);
+        }
+    }
+        
+        <!-- #region General -->
+        <h4 class="border-bottom col-xl-12">General</h4>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- For every post in the list, add a post to the site - for every category -->
+                @foreach (var post in generalPosts)
+                {
+                    <div class="card float-left ml-1" style="max-width: 16rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="float-left m-2 card-text">@post.Content</p>
+                            <p class="card-footer small">Posted by: @post.UserIdToUsername(@post.PosterID)</p>
+                            @{
+                                foreach (var comment in comments)
+                                {
+                                    if (comment.PostId == post.PostID)
+                                    {
+                                        <div class="card-footer">
+                                            <p>@comment.Text</p>
+                                            <p class="small">By: @comment.UserIdToUsername(@comment.UserId)</p>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                <a asp-page="\NewPost">
+                <div class="card float-left ml-1" style="max-width: 16rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">New Post</h5>
+                        <p class="float-left m-2 card-text"></p>
+                        <p class="card-footer small"></p>
+                    </div>
+                </div>
+                </a>
+            </div>
+        </div>
+        
+        // If there are no posts in the lists, display this.
+    if (generalPosts.Count == 0)
+    {
+        <div class="row">
+        <div class="border-bottom col-xl-12 py-4">
+            <h4>No posts here!</h4>
+            <h4>Why don't you <a asp-page="\NewPost">add one?</a></h4>
+        </div>
+        </div>
+    }
+        <h4 class="border-bottom col-xl-12">Programming</h4>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- For every post in the list, add a post to the site - for every category -->
+                @foreach (var post in programmingPosts)
+                {
+                    <div class="card float-left ml-1" style="max-width: 16rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="float-left m-2 card-text">@post.Content</p>
+                            <p class="card-footer small">Posted by: @post.UserIdToUsername(@post.PosterID)</p>
+                            @{
+                                foreach (var comment in comments)
+                                {
+                                    if (comment.PostId == post.PostID)
+                                    {
+                                        <div class="card-footer">
+                                            <p>@comment.Text</p>
+                                            <p class="small">By: @comment.UserIdToUsername(@comment.UserId)</p>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                <a asp-page="\NewPost">
+                <div class="card float-left ml-1" style="max-width: 16rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">New Post</h5>
+                        <p class="float-left m-2 card-text"></p>
+                        <p class="card-footer small"></p>
+                    </div>
+                </div>
+                </a>
+            </div>
+        </div>
+        
+        
+    if (programmingPosts.Count == 0)
+    {
+        <div class="row">
+        <div class="border-bottom col-xl-12 py-4">
+            <h4>No programming posts here!</h4>
+            <h4>Why don't you <a asp-page="\NewPost">add one?</a></h4>
+        </div>
+        </div>
+    }
+    
+        <h4 class="border-bottom col-xl-12">Gaming</h4>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- For every post in the list, add a post to the site - for every category -->
+                @foreach (var post in gamingPosts)
+                {
+                    <div class="card float-left ml-1" style="max-width: 16rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="float-left m-2 card-text">@post.Content</p>
+                            <p class="card-footer small">Posted by: @post.UserIdToUsername(@post.PosterID)</p>
+                            @{
+                                foreach (var comment in comments)
+                                {
+                                    if (comment.PostId == post.PostID)
+                                    {
+                                        <div class="card-footer">
+                                            <p>@comment.Text</p>
+                                            <p class="small">By: @comment.UserIdToUsername(@comment.UserId)</p>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                <a asp-page="\NewPost">
+                <div class="card float-left ml-1" style="max-width: 16rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">New Post</h5>
+                        <p class="float-left m-2 card-text"></p>
+                        <p class="card-footer small"></p>
+                    </div>
+                </div>
+                </a>
+            </div>
+                        </div>
+    if (gamingPosts.Count == 0)
+    {
+        <div class="row">
+        <div class="border-bottom col-xl-12 py-4">
+            <h4>No gaming posts here!</h4>
+            <h4>Why don't you <a asp-page="\NewPost">add one?</a></h4>
+        </div>
+        </div>
+    }
+}
+    else
+    {
+        <h4 class="font-weight-bold">You need to log in to see the posts!</h4>
+    }
+}
