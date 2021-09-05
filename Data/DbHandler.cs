@@ -87,13 +87,20 @@ namespace AuthSystem.Data
             connection.Close();
             return output;
         }
+
+        public static string CleanInput(string content)
+        {
+            string output = content.Replace("'", "''");
+            return output;
+        }
         
         public static async void WritePostToDb(string posterid, string title, string content, string sub, long postId)
         {
             long postdate = DateTime.Now.Ticks;
             using SqliteConnection connection = new SqliteConnection("DataSource=app.db;Cache=Shared");
             connection.Open();
-            using var command = new SqliteCommand($"INSERT INTO {dbPosts} (PosterID, Title, Content, PostedDate, Subforum, PostId) VALUES ('{posterid}', '{title}', '{content}', {postdate}, '{sub}', {postId});", connection);
+            var cleancontent = CleanInput(content);
+            using var command = new SqliteCommand($"INSERT INTO {dbPosts} (PosterID, Title, Content, PostedDate, Subforum, PostId) VALUES ('{posterid}', '{title}', '{cleancontent}', {postdate}, '{sub}', {postId});", connection);
             var commandCheck = await command.ExecuteNonQueryAsync();
             if (commandCheck <= 0)
             {
@@ -107,8 +114,9 @@ namespace AuthSystem.Data
         {
             using var connection = new SqliteConnection("DataSource=app.db;Cache=Shared");
             connection.Open();
+            var cleancontent = CleanInput(content);
             using var command = new SqliteCommand($"INSERT INTO {dbComments} (PostId, Text, UserId)"
-                                                  + $"VALUES ({postId}, '{content}', '{userId}')", connection);
+                                                  + $"VALUES ({postId}, '{cleancontent}', '{userId}')", connection);
             var confirm = await command.ExecuteNonQueryAsync();
             if (confirm <= 0)
             {
